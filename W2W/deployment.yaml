@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamlit-app
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: streamlit-app
+  template:
+    metadata:
+      labels:
+        app: streamlit-app
+      annotations:
+        kubernetes.io/change-cause: "Updated streamlit app image at $(date)"  # Triggering deployment update
+    spec:
+      containers:
+      - name: streamlit-container
+        image: drewty/streamlit-app:latest
+        ports:
+          - containerPort: 8501
+        resources:
+          requests:
+            cpu: "50m"      # Minimum CPU allocation
+            memory: "64Mi"  # Minimum memory allocation
+          limits:
+            cpu: "100m"     # Maximum CPU allocation
+            memory: "128Mi" # Maximum memory allocation
+      imagePullSecrets:
+        - name: my-registry-secret  # The name of the secret you created
